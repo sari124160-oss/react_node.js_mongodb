@@ -6,7 +6,8 @@ require('dotenv').config();
 
 const authRoutes = require('./src/routes/authRoutes');
 const requestRoutes = require('./src/routes/requestRoutes');
-const { verifyToken } = require('./src/middleware/verifyToken');
+const adminRoutes = require('./src/routes/adminRoutes');
+const { verifyToken, verifyAdmin } = require('./src/middleware/verifyToken');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/requests', verifyToken, requestRoutes);
+app.use('/api/admin', verifyAdmin, adminRoutes);
 app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
