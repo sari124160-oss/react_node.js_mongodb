@@ -1,12 +1,15 @@
- const express = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
+const authRoutes = require('./src/routes/authRoutes');
+const requestRoutes = require('./src/routes/requestRoutes');
+const { verifyToken } = require('./src/middleware/verifyToken');
+
 const app = express();
 
-// Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
@@ -14,12 +17,14 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Test route
+app.use('/api/auth', authRoutes);
+app.use('/api/requests', verifyToken, requestRoutes);
+app.use('/uploads', express.static('uploads'));
+
 app.get('/', (req, res) => {
   res.json({ message: '✅ Server is running!' });
 });
 
-// DB + Server start
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ Connected to MongoDB');
